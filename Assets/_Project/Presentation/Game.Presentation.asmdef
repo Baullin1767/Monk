@@ -1,0 +1,26 @@
+{
+    "name": "Game.Presentation",
+    "rootNamespace": "Monk.Presentation",
+    "references": [
+        "Game.Core",
+        "Game.Common",
+        "Game.Configs",
+        "Game.Infrastructure",
+        "Game.Input",
+        "Unity.Cinemachine",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "JoystickPack"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "DOTween.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde643f5ad18ae1419806a0d1f925213, type: 3}
+  m_Name: TermsConfig
+  m_EditorClassIdentifier: Game.Configs::Monk.Configs.TextContentConfig
+  title: TERMS OF SERVICE
+  body: 'Terms of Service
+
+
+    Last updated: February 2026
+
+
+    1. Acceptance of
+    Terms
+
+    By downloading, installing, or using Monk, you agree to be bound by
+    these Terms of Service.
+
+
+    2. License
+
+    We grant you a limited, non-exclusive,
+    non-transferable license to use the game for personal, non-commercial purposes.
+
+
+    3.
+    User Conduct
+
+    You agree not to modify, reverse engineer, or create derivative
+    works based on the game.
+
+
+    4. Intellectual Property
+
+    All content, graphics,
+    and code are the property of the developer and are protected by applicable copyright
+    laws.
+
+
+    5. Disclaimer
+
+    The game is provided "as is" without warranties
+    of any kind.
+
+
+    6. Changes to Terms
+
+    We reserve the right to modify these
+    terms at any time. Continued use constitutes acceptance of the updated terms.'

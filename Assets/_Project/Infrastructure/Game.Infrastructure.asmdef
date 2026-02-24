@@ -1,0 +1,18 @@
+{
+    "name": "Game.Infrastructure",
+    "rootNamespace": "Monk.Infrastructure",
+    "references": [
+        "Game.Core",
+        "Game.Common",
+        "Game.Configs"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

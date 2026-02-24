@@ -1,0 +1,19 @@
+{
+    "name": "Game.Input",
+    "rootNamespace": "Monk.Input",
+    "references": [
+        "Game.Core",
+        "Game.Common",
+        "JoystickPack",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

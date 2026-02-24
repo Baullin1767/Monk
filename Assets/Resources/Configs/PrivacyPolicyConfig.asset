@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde643f5ad18ae1419806a0d1f925213, type: 3}
+  m_Name: PrivacyPolicyConfig
+  m_EditorClassIdentifier: Game.Configs::Monk.Configs.TextContentConfig
+  title: PRIVACY POLICY
+  body: 'Privacy Policy
+
+
+    Last updated: February 2026
+
+
+    1. Information We
+    Collect
+
+    We do not collect personal information. The game may store local
+    preferences on your device.
+
+
+    2. Usage Data
+
+    We may collect anonymous
+    usage statistics to improve the game experience.
+
+
+    3. Third-Party Services
+
+    The
+    game may use third-party services that have their own privacy policies.
+
+
+    4.
+    Data Storage
+
+    All game progress and settings are stored locally on your device.
+
+
+    5.
+    Children''s Privacy
+
+    We do not knowingly collect information from children
+    under 13.
+
+
+    6. Changes to This Policy
+
+    We may update this privacy policy
+    from time to time. Changes will be reflected in the "Last updated" date.
+
+
+    7.
+    Contact
+
+    For questions about this privacy policy, please contact the developer.'

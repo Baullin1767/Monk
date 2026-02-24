@@ -1,0 +1,18 @@
+{
+    "name": "Game.Common",
+    "rootNamespace": "Monk.Common",
+    "references": [
+        "Game.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "DOTween.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
