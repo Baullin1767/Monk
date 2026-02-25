@@ -1,38 +1,58 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Monk.Presentation
 {
-    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(BoxCollider2D))]
     public class PlayerAttackHitbox : MonoBehaviour
     {
         [SerializeField] private int attackDamage = 1;
 
-        private Collider2D hitboxCollider;
+        private BoxCollider2D boxCollider;
+        private bool isActive;
+        private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
+        private readonly Collider2D[] overlapBuffer = new Collider2D[16];
 
         private void Awake()
         {
-            hitboxCollider = GetComponent<Collider2D>();
-            hitboxCollider.isTrigger = true;
-            hitboxCollider.enabled = false;
+            boxCollider = GetComponent<BoxCollider2D>();
+            boxCollider.enabled = false;
         }
 
         public void EnableHitbox()
         {
-            if (hitboxCollider != null) hitboxCollider.enabled = true;
+            hitEnemies.Clear();
+            isActive = true;
         }
 
         public void DisableHitbox()
         {
-            if (hitboxCollider != null) hitboxCollider.enabled = false;
+            isActive = false;
+            hitEnemies.Clear();
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void FixedUpdate()
         {
-            if (!other.CompareTag("Enemy")) return;
+            if (!isActive) return;
 
-            var enemyController = other.GetComponent<EnemyController>();
-            if (enemyController != null)
+            var worldCenter = (Vector2)transform.TransformPoint(boxCollider.offset);
+            var lossyScale = transform.lossyScale;
+            var worldSize = new Vector2(
+                boxCollider.size.x * Mathf.Abs(lossyScale.x),
+                boxCollider.size.y * Mathf.Abs(lossyScale.y)
+            );
+
+            int count = Physics2D.OverlapBoxNonAlloc(worldCenter, worldSize, 0f, overlapBuffer);
+
+            for (int i = 0; i < count; i++)
             {
+                var col = overlapBuffer[i];
+                if (!col.CompareTag("Enemy")) continue;
+
+                var enemyController = col.GetComponent<EnemyController>();
+                if (enemyController == null) continue;
+                if (!hitEnemies.Add(enemyController)) continue;
+
                 enemyController.TakeDamage(attackDamage);
             }
         }

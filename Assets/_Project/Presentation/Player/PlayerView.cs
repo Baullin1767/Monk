@@ -14,11 +14,6 @@ namespace Monk.Presentation
 
         public void SetFacing(FacingDirection direction)
         {
-            if (spriteRenderer == null)
-            {
-                return;
-            }
-
             spriteRenderer.flipX = direction == FacingDirection.Left;
         }
 
