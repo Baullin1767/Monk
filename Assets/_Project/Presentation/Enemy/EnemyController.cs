@@ -47,11 +47,10 @@ namespace Monk.Presentation
         private const float ContactDamageInterval = 1f;
         private FacingDirection facing = FacingDirection.Left;
 
-        private float ScaleFactor => transform.localScale.x;
-        private float MoveSpeed => (config != null ? config.MoveSpeed : 2f) * ScaleFactor;
-        private float ChaseSpeed => (config != null ? config.ChaseSpeed : 4f) * ScaleFactor;
-        private float DetectionRange => (config != null ? config.DetectionRange : 5f) * ScaleFactor;
-        private float ScaledAttackRange => attackRange * ScaleFactor;
+        private float MoveSpeed => config != null ? config.MoveSpeed : 2f;
+        private float ChaseSpeed => config != null ? config.ChaseSpeed : 4f;
+        private float DetectionRange => config != null ? config.DetectionRange : 5f;
+        private float ScaledAttackRange => attackRange;
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -71,9 +70,8 @@ namespace Monk.Presentation
         private void Start()
         {
             spawnPosition = rb.position;
-            var scaledPatrolDistance = patrolDistance * ScaleFactor;
-            patrolPointA = spawnPosition + Vector2.left * scaledPatrolDistance * 0.5f;
-            patrolPointB = spawnPosition + Vector2.right * scaledPatrolDistance * 0.5f;
+            patrolPointA = spawnPosition + Vector2.left * patrolDistance * 0.5f;
+            patrolPointB = spawnPosition + Vector2.right * patrolDistance * 0.5f;
 
             if (health != null)
             {
@@ -289,7 +287,7 @@ namespace Monk.Presentation
             if (playerTransform == null) return;
 
             var distToPlayer = Vector2.Distance(rb.position, (Vector2)playerTransform.position);
-            if (distToPlayer <= stopDistance * ScaleFactor)
+            if (distToPlayer <= stopDistance)
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
                 return;
