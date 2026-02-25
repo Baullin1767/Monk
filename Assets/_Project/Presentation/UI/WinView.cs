@@ -15,19 +15,15 @@ namespace Monk.Presentation
         [SerializeField] private Button mainMenuButton;
         [SerializeField] private float showDelay = 2f;
 
-        [SerializeField] private EnemyHealth enemyHealth;
         [SerializeField] private CoinManager coinManager;
 
+        private EnemyHealth[] allEnemies;
+        private int enemiesAlive;
         private Coroutine showCoroutine;
 
         private void Awake()
         {
             Time.timeScale = 1f;
-
-            if (enemyHealth == null)
-            {
-                enemyHealth = FindFirstObjectByType<EnemyHealth>();
-            }
 
             if (coinManager == null)
             {
@@ -51,23 +47,27 @@ namespace Monk.Presentation
 
         private void OnEnable()
         {
-            if (enemyHealth == null)
-            {
-                enemyHealth = FindFirstObjectByType<EnemyHealth>();
-            }
+            allEnemies = FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None);
+            enemiesAlive = allEnemies.Length;
 
-            if (enemyHealth != null)
+            for (int i = 0; i < allEnemies.Length; i++)
             {
-                enemyHealth.OnDied -= HandleEnemyDied;
-                enemyHealth.OnDied += HandleEnemyDied;
+                allEnemies[i].OnDied -= HandleEnemyDied;
+                allEnemies[i].OnDied += HandleEnemyDied;
             }
         }
 
         private void OnDisable()
         {
-            if (enemyHealth != null)
+            if (allEnemies != null)
             {
-                enemyHealth.OnDied -= HandleEnemyDied;
+                for (int i = 0; i < allEnemies.Length; i++)
+                {
+                    if (allEnemies[i] != null)
+                    {
+                        allEnemies[i].OnDied -= HandleEnemyDied;
+                    }
+                }
             }
 
             if (showCoroutine != null)
@@ -92,6 +92,10 @@ namespace Monk.Presentation
 
         private void HandleEnemyDied()
         {
+            enemiesAlive--;
+
+            if (enemiesAlive > 0) return;
+
             if (showCoroutine != null)
             {
                 StopCoroutine(showCoroutine);
@@ -137,8 +141,19 @@ namespace Monk.Presentation
         public void OnNextLevelClicked()
         {
             Time.timeScale = 1f;
-            Screen.orientation = ScreenOrientation.LandscapeLeft;
-            SceneManager.LoadScene(Constants.Scenes.Level2);
+            var currentIndex = SceneManager.GetActiveScene().buildIndex;
+            var nextIndex = currentIndex + 1;
+
+            if (nextIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                Screen.orientation = ScreenOrientation.LandscapeLeft;
+                SceneManager.LoadScene(nextIndex);
+            }
+            else
+            {
+                Screen.orientation = ScreenOrientation.Portrait;
+                SceneManager.LoadScene(Constants.Scenes.MainMenu);
+            }
         }
 
         public void OnMainMenuClicked()

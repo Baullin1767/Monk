@@ -124,7 +124,7 @@ namespace Monk.Presentation
         public void OnRetryClicked()
         {
             Time.timeScale = 1f;
-            SceneManager.LoadScene(Constants.Scenes.Level1);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         public void OnMainMenuClicked()
