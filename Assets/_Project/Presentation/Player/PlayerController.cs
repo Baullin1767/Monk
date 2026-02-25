@@ -13,8 +13,8 @@ namespace Monk.Presentation
         [SerializeField] private PlayerAnimator playerAnimator;
         [SerializeField] private PlayerView view;
         [SerializeField] private PlayerAttackHitbox attackHitbox;
-        [SerializeField] private float firstAttackDuration = 0.45f;
-        [SerializeField] private float secondAttackDuration = 0.35f;
+        [SerializeField] private float firstAttackDuration = 0.2f;
+        [SerializeField] private float secondAttackDuration = 0.2f;
         [SerializeField] private float comboChainTimeout = 0.8f;
         [SerializeField] private float fallDeathY = -12f;
 
