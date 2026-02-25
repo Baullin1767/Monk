@@ -80,7 +80,7 @@ namespace Monk.Input
 
         private void Update()
         {
-            HorizontalAxis = movementJoystick != null ? Mathf.Clamp(movementJoystick.Horizontal, -1f, 1f) : 0f;
+            HorizontalAxis = movementJoystick != null ? movementJoystick.Horizontal : 0f;
 
             if (keyboardFallbackInEditor && Application.isEditor)
             {

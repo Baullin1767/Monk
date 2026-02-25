@@ -6,6 +6,7 @@ namespace Monk.Presentation
     public class PlayerView : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Transform transformHit;
         [SerializeField] private ParticleSystem landParticles;
         [SerializeField] private float damageFlashDuration = 0.08f;
         [SerializeField] private Color damageFlashColor = new Color(1f, 0.45f, 0.45f, 1f);
@@ -15,6 +16,7 @@ namespace Monk.Presentation
         public void SetFacing(FacingDirection direction)
         {
             spriteRenderer.flipX = direction == FacingDirection.Left;
+            transformHit.localScale = new Vector3(direction == FacingDirection.Left ? -1 : 1, 1, 1);
         }
 
         public void PlayDamageFlash()
