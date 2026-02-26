@@ -131,6 +131,8 @@ namespace Monk.Presentation
         {
             Time.timeScale = 1f;
             Screen.orientation = ScreenOrientation.Portrait;
+            Screen.autorotateToLandscapeLeft = false;
+            Screen.autorotateToLandscapeRight = false;
             SceneManager.LoadScene(Constants.Scenes.MainMenu);
         }
     }

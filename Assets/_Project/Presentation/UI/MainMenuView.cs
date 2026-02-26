@@ -12,6 +12,7 @@ namespace Monk.Presentation
         public void OnStartGameClicked()
         {
             var storage = new PlayerPrefsStorage();
+            PlayerHealth.SyncHealthWithRealtime(storage, 3);
             var maxHealth = storage.GetInt(PlayerHealth.MaxHealthKey, 3);
             var currentHealth = storage.GetInt(PlayerHealth.CurrentHealthKey, maxHealth);
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -27,6 +28,8 @@ namespace Monk.Presentation
             }
 
             Screen.orientation = ScreenOrientation.LandscapeLeft;
+            Screen.autorotateToLandscapeLeft = true;
+            Screen.autorotateToLandscapeRight = true;
             SceneManager.LoadScene(Constants.Scenes.Level1);
         }
     }

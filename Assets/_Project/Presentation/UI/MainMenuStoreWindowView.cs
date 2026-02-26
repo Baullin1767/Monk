@@ -191,6 +191,7 @@ namespace Monk.Presentation
                 return;
             }
 
+            PlayerHealth.SyncHealthWithRealtime(storage, 3);
             var kit = kits[index];
             var coins = storage.GetInt(CoinManager.CoinTotalKey, 0);
             var maxHealth = storage.GetInt(PlayerHealth.MaxHealthKey, 3);
@@ -222,6 +223,7 @@ namespace Monk.Presentation
 
         private void RefreshUi()
         {
+            PlayerHealth.SyncHealthWithRealtime(storage, 3);
             var coins = storage.GetInt(CoinManager.CoinTotalKey, 0);
             var maxHealth = storage.GetInt(PlayerHealth.MaxHealthKey, 3);
             var currentHealth = storage.GetInt(PlayerHealth.CurrentHealthKey, maxHealth);

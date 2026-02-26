@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 using Monk.Configs;
 using Monk.Infrastructure;
@@ -9,6 +10,9 @@ namespace Monk.Presentation
     {
         public const string CurrentHealthKey = "monk.player.health.current";
         public const string MaxHealthKey = "monk.player.health.max";
+        public const string LastHealthRegenUtcTicksKey = "monk.player.health.regen.lastUtcTicks";
+        public const int HealthRegenAmountPerStep = 1;
+        public const int HealthRegenMinutesPerStep = 10;
 
         [SerializeField] private PlayerConfig playerConfig;
         [SerializeField] private int maxHealth = 3;
@@ -29,6 +33,8 @@ namespace Monk.Presentation
             storage = new PlayerPrefsStorage();
             MaxHealth = playerConfig != null ? playerConfig.MaxHealth : maxHealth;
             storage.SetInt(MaxHealthKey, MaxHealth);
+
+            SyncHealthWithRealtime(storage, MaxHealth);
 
             var savedHealth = storage.GetInt(CurrentHealthKey, MaxHealth);
             CurrentHealth = Mathf.Clamp(savedHealth, 0, MaxHealth);
@@ -102,11 +108,53 @@ namespace Monk.Presentation
             OnPlayerDied?.Invoke();
         }
 
+        public static void SyncHealthWithRealtime(PlayerPrefsStorage storage, int fallbackMaxHealth = 3)
+        {
+            storage ??= new PlayerPrefsStorage();
+
+            var max = Mathf.Max(1, storage.GetInt(MaxHealthKey, fallbackMaxHealth));
+            var current = Mathf.Clamp(storage.GetInt(CurrentHealthKey, max), 0, max);
+            var nowUtc = DateTime.UtcNow;
+            var hasLastTick = long.TryParse(
+                storage.GetString(LastHealthRegenUtcTicksKey, string.Empty),
+                NumberStyles.Integer,
+                CultureInfo.InvariantCulture,
+                out var lastTickValue);
+
+            var lastTickUtc = hasLastTick ? new DateTime(lastTickValue, DateTimeKind.Utc) : nowUtc;
+            if (lastTickUtc > nowUtc)
+            {
+                lastTickUtc = nowUtc;
+            }
+
+            if (current < max)
+            {
+                var elapsed = nowUtc - lastTickUtc;
+                var intervals = Mathf.Max(0, Mathf.FloorToInt((float)(elapsed.TotalMinutes / HealthRegenMinutesPerStep)));
+                if (intervals > 0)
+                {
+                    current = Mathf.Min(max, current + intervals * HealthRegenAmountPerStep);
+                    lastTickUtc = lastTickUtc.AddMinutes(intervals * HealthRegenMinutesPerStep);
+                }
+            }
+            else
+            {
+                // Prevent stockpiling regen intervals while already full.
+                lastTickUtc = nowUtc;
+            }
+
+            storage.SetInt(MaxHealthKey, max);
+            storage.SetInt(CurrentHealthKey, current);
+            storage.SetString(LastHealthRegenUtcTicksKey, lastTickUtc.Ticks.ToString(CultureInfo.InvariantCulture));
+            storage.Save();
+        }
+
         private void SaveCurrentHealth()
         {
             storage ??= new PlayerPrefsStorage();
             storage.SetInt(MaxHealthKey, MaxHealth);
             storage.SetInt(CurrentHealthKey, CurrentHealth);
+            storage.SetString(LastHealthRegenUtcTicksKey, DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture));
             storage.Save();
         }
     }

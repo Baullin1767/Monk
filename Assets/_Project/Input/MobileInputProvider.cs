@@ -112,6 +112,13 @@ namespace Monk.Input
             AttackPressed = attackQueued;
             jumpQueued = false;
             attackQueued = false;
+
+            Screen.orientation = UnityEngine.Input.deviceOrientation switch
+            {
+                DeviceOrientation.LandscapeLeft => ScreenOrientation.LandscapeLeft,
+                DeviceOrientation.LandscapeRight => ScreenOrientation.LandscapeRight,
+                _ => Screen.orientation
+            };
         }
 
         private void HandleJumpPressed()

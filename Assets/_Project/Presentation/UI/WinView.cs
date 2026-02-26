@@ -147,11 +147,15 @@ namespace Monk.Presentation
             if (nextIndex < SceneManager.sceneCountInBuildSettings)
             {
                 Screen.orientation = ScreenOrientation.LandscapeLeft;
+                Screen.autorotateToLandscapeLeft = true;
+                Screen.autorotateToLandscapeRight = true;
                 SceneManager.LoadScene(nextIndex);
             }
             else
             {
                 Screen.orientation = ScreenOrientation.Portrait;
+                Screen.autorotateToLandscapeLeft = false;
+                Screen.autorotateToLandscapeRight = false;
                 SceneManager.LoadScene(Constants.Scenes.MainMenu);
             }
         }
@@ -160,6 +164,8 @@ namespace Monk.Presentation
         {
             Time.timeScale = 1f;
             Screen.orientation = ScreenOrientation.Portrait;
+            Screen.autorotateToLandscapeLeft = false;
+            Screen.autorotateToLandscapeRight = false;
             SceneManager.LoadScene(Constants.Scenes.MainMenu);
         }
     }
