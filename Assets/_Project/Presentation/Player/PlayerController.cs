@@ -1,5 +1,6 @@
 using UnityEngine;
 using Monk.Core;
+using Monk.Infrastructure;
 using Monk.Input;
 
 namespace Monk.Presentation
@@ -27,6 +28,7 @@ namespace Monk.Presentation
         private float comboChainTimer;
         private bool wasGrounded;
         private bool isDead;
+        private AudioManager audioManager;
 
         private void Awake()
         {
@@ -60,6 +62,10 @@ namespace Monk.Presentation
             if (health != null)
             {
                 health.OnPlayerDied += HandlePlayerDied;
+            }
+            if (audioManager == null)
+            {
+                audioManager = FindFirstObjectByType<AudioManager>();
             }
         }
 
@@ -150,6 +156,8 @@ namespace Monk.Presentation
                 attackTimer = secondAttackDuration;
                 playerAnimator?.TriggerAttack2();
                 attackHitbox?.EnableHitbox();
+                if (audioManager != null)
+                    audioManager.PlayHitEnemy();
             }
         }
 
@@ -216,6 +224,8 @@ namespace Monk.Presentation
                     attackTimer = secondAttackDuration;
                     playerAnimator.TriggerAttack2();
                     attackHitbox?.EnableHitbox();
+                    if (audioManager != null)
+                        audioManager.PlayHitEnemy();
                 }
 
                 return;
@@ -229,6 +239,8 @@ namespace Monk.Presentation
                 queueSecondAttack = false;
                 playerAnimator.TriggerAttack();
                 attackHitbox?.EnableHitbox();
+                if (audioManager != null)
+                    audioManager.PlayHitEnemy();
             }
         }
     }

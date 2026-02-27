@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Monk.Common;
@@ -8,6 +9,13 @@ namespace Monk.Presentation
     public class MainMenuView : MonoBehaviour
     {
         private const string NoHealthMessage = "You dont have enoth Health go to Store to buy some health Kit";
+
+        private void Awake()
+        {
+            Screen.autorotateToLandscapeLeft = false;
+            Screen.autorotateToLandscapeRight = false;
+            Screen.orientation = ScreenOrientation.Portrait;
+        }
 
         public void OnStartGameClicked()
         {
@@ -30,7 +38,8 @@ namespace Monk.Presentation
             Screen.orientation = ScreenOrientation.LandscapeLeft;
             Screen.autorotateToLandscapeLeft = true;
             Screen.autorotateToLandscapeRight = true;
-            SceneManager.LoadScene(Constants.Scenes.Level1);
+            var levelProgress = new LevelProgressService(storage);
+            SceneManager.LoadScene(levelProgress.GetNextSceneToPlay());
         }
     }
 }

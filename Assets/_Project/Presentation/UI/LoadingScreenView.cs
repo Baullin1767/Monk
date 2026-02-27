@@ -18,6 +18,8 @@ namespace Monk.Presentation
 
         private void Start()
         {
+            Screen.autorotateToLandscapeLeft = false;
+            Screen.autorotateToLandscapeRight = false;
             Screen.orientation = ScreenOrientation.Portrait;
 
             barFill.type = Image.Type.Filled;

@@ -1,5 +1,6 @@
 using System.Collections;
 using Monk.Common;
+using Monk.Infrastructure;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -140,6 +141,9 @@ namespace Monk.Presentation
 
         public void OnNextLevelClicked()
         {
+            var levelProgress = new LevelProgressService(new PlayerPrefsStorage());
+            levelProgress.MarkLevelCompleted(SceneManager.GetActiveScene().name);
+
             Time.timeScale = 1f;
             var currentIndex = SceneManager.GetActiveScene().buildIndex;
             var nextIndex = currentIndex + 1;
@@ -153,9 +157,9 @@ namespace Monk.Presentation
             }
             else
             {
-                Screen.orientation = ScreenOrientation.Portrait;
                 Screen.autorotateToLandscapeLeft = false;
                 Screen.autorotateToLandscapeRight = false;
+                Screen.orientation = ScreenOrientation.Portrait;
                 SceneManager.LoadScene(Constants.Scenes.MainMenu);
             }
         }
@@ -163,9 +167,9 @@ namespace Monk.Presentation
         public void OnMainMenuClicked()
         {
             Time.timeScale = 1f;
-            Screen.orientation = ScreenOrientation.Portrait;
             Screen.autorotateToLandscapeLeft = false;
             Screen.autorotateToLandscapeRight = false;
+            Screen.orientation = ScreenOrientation.Portrait;
             SceneManager.LoadScene(Constants.Scenes.MainMenu);
         }
     }

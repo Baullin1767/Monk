@@ -29,9 +29,9 @@ namespace Monk.Presentation
         public void OnMainMenuClicked()
         {
             Time.timeScale = 1f;
-            Screen.orientation = ScreenOrientation.Portrait;
             Screen.autorotateToLandscapeLeft = false;
             Screen.autorotateToLandscapeRight = false;
+            Screen.orientation = ScreenOrientation.Portrait;
             SceneManager.LoadScene(Constants.Scenes.MainMenu);
         }
     }

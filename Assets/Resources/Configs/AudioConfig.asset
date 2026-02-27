@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d5323ab25e797d43b23df4e6134fecf, type: 3}
+  m_Name: AudioConfig
+  m_EditorClassIdentifier: Game.Configs::Monk.Configs.AudioConfig
+  defaultMusicVolume: 0.7
+  defaultSFXVolume: 1
+  mainThemeClip: {fileID: 8300000, guid: f72aebf2bfb02c6438375eecd86287b0, type: 3}
+  jumpClip: {fileID: 8300000, guid: 3d2cc4945e8c9554b906e44a2fa4ce66, type: 3}
+  hurtClip: {fileID: 8300000, guid: 0ddf3cbb2b83c1947b4eecf0252fddfd, type: 3}
+  hitEnemyClip: {fileID: 8300000, guid: ff8a295f027b9184192177b796904201, type: 3}
+  coinClip: {fileID: 0}

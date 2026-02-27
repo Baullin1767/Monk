@@ -31,6 +31,7 @@ namespace Monk.Common
             public const string MusicVolume = "MusicVolume";
             public const string SFXVolume = "SFXVolume";
             public const string HighScore = "HighScore";
+            public const string HighestCompletedLevel = "monk.progress.highestLevelCompleted";
         }
     }
 }

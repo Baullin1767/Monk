@@ -27,9 +27,11 @@ namespace Monk.Presentation
 
         private float invincibilityTimer;
         private PlayerPrefsStorage storage;
+        private AudioManager audioManager;
 
         private void Awake()
         {
+            audioManager = FindFirstObjectByType<AudioManager>();
             storage = new PlayerPrefsStorage();
             MaxHealth = playerConfig != null ? playerConfig.MaxHealth : maxHealth;
             storage.SetInt(MaxHealthKey, MaxHealth);
@@ -68,6 +70,9 @@ namespace Monk.Presentation
             invincibilityTimer = playerConfig != null ? playerConfig.InvincibilityDuration : invincibilityDuration;
             SaveCurrentHealth();
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+
+            if (audioManager != null)
+                audioManager.PlayHurt();
 
             if (CurrentHealth <= 0)
             {
