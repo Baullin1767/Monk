@@ -8,8 +8,7 @@ namespace Monk.Presentation.Editor
     public static class EnemyPrefabSetupEditor
     {
         private const string PrefabPath = "Assets/_Project/Prefabs/Enemies/Tufei.prefab";
-        private const string SpriteSheetPath = "Assets/_Project/Sprites/Enemy/tufei.png";
-        private const string DefaultSpriteName = "tufei_0";
+        private const string IdleStripPath = "Assets/2dAssetPack/4 Enemies/4/Idle.png";
         private const string ControllerPath = "Assets/_Project/Animations/Enemy/Enemy.controller";
 
         [MenuItem("Tools/Monk/Setup/Create Enemy Prefab")]
@@ -148,16 +147,18 @@ namespace Monk.Presentation.Editor
 
         private static Sprite LoadDefaultSprite()
         {
-            var allAssets = AssetDatabase.LoadAllAssetsAtPath(SpriteSheetPath);
+            TwoDAssetPackMigrationEditor.EnsurePresetASpriteSlices();
+
+            var allAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(IdleStripPath);
             foreach (var asset in allAssets)
             {
-                if (asset is Sprite sprite && sprite.name == DefaultSpriteName)
+                if (asset is Sprite sprite)
                 {
                     return sprite;
                 }
             }
 
-            return null;
+            return AssetDatabase.LoadAssetAtPath<Sprite>(IdleStripPath);
         }
 
         private static ScriptableObject LoadEnemyConfig()

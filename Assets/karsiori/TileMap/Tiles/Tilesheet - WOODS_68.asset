@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Tilesheet - WOODS_68
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -1077755193, guid: b425613db706e0a49821a35253ec9db1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8fd7104c7fe6fbf4eaaee7ed54a62f14, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

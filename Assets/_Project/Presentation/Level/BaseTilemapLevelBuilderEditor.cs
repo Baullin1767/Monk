@@ -14,14 +14,14 @@ namespace Monk.Presentation.Editor
     {
         private const string GameScenePath = "Assets/_Project/Scenes/Level 1.unity";
         private const string LevelRootName = "BaseLevel_Tilemap";
-        private const string GroundTilePath = "Assets/karsiori/TileMap/Tiles/Tilesheet - WOODS_12.asset";
-        private const string EdgeTilePath = "Assets/karsiori/TileMap/Tiles/Tilesheet - WOODS_2.asset";
-        private const string AccentTilePath = "Assets/karsiori/TileMap/Tiles/Tilesheet - WOODS_10.asset";
-        private const string GroundSecondRowTilePath = "Assets/karsiori/TileMap/Tiles/Tilesheet - WOODS_12.asset";
-        private const string GroundThirdRowTilePath = "Assets/karsiori/TileMap/Tiles/Tilesheet - WOODS_26.asset";
+        private const string GroundTilePath = "Assets/2dAssetPack/Generated/Tiles/Tile_12.asset";
+        private const string EdgeTilePath = "Assets/2dAssetPack/Generated/Tiles/Tile_02.asset";
+        private const string AccentTilePath = "Assets/2dAssetPack/Generated/Tiles/Tile_10.asset";
+        private const string GroundSecondRowTilePath = "Assets/2dAssetPack/Generated/Tiles/Tile_13.asset";
+        private const string GroundThirdRowTilePath = "Assets/2dAssetPack/Generated/Tiles/Tile_14.asset";
         private const string CoinPrefabPath = "Assets/_Project/Prefabs/Collectibles/GoldCoin.prefab";
 
-        [MenuItem("Tools/Monk/Setup/Build Base Level From Karsiori Tiles")]
+        [MenuItem("Tools/Monk/Setup/Build Base Level From 2dAssetPack Tiles")]
         public static void BuildBaseLevel()
         {
             var scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
@@ -74,7 +74,7 @@ namespace Monk.Presentation.Editor
             var groundThirdRowTile = LoadTile(GroundThirdRowTilePath) ?? groundTile;
             if (groundTile == null)
             {
-                Debug.LogError("No valid Karsiori tile asset found. Aborting level build.");
+                Debug.LogError("No valid 2dAssetPack tile asset found. Aborting level build.");
                 return;
             }
 
@@ -110,7 +110,7 @@ namespace Monk.Presentation.Editor
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
-            Debug.Log("Base level generated from Karsiori tile assets.");
+            Debug.Log("Base level generated from 2dAssetPack tile assets.");
         }
 
         private static TileBase LoadTile(string path)
@@ -193,21 +193,20 @@ namespace Monk.Presentation.Editor
 
             var layerDefs = new[]
             {
-                new { name = "BACKGROUND.png", x = 0.05f, y = 0.02f, order = -30, z = 14f, scale = 2.8f },
-                new { name = "WOODS - Fourth.png", x = 0.12f, y = 0.04f, order = -28, z = 13f, scale = 2.6f },
-                new { name = "WOODS - Third.png", x = 0.20f, y = 0.06f, order = -26, z = 12f, scale = 2.4f },
-                new { name = "WOODS - Second.png", x = 0.32f, y = 0.08f, order = -24, z = 11f, scale = 2.2f },
-                new { name = "WOODS - First.png", x = 0.45f, y = 0.1f, order = -22, z = 10f, scale = 2.0f },
-                new { name = "VINES - Second.png", x = 0.58f, y = 0.12f, order = -20, z = 9f, scale = 2.0f },
-                new { name = "BUSH - BACKGROUND.png", x = 0.72f, y = 0.15f, order = -18, z = 8f, scale = 2.0f }
-            };
+                new { name = "1.png", x = 0.05f, y = 0.02f, order = -30, z = 14f, scale = 3.2f },
+                new { name = "2.png", x = 0.12f, y = 0.04f, order = -28, z = 13f, scale = 3.0f },
+                new { name = "3.png", x = 0.20f, y = 0.06f, order = -26, z = 12f, scale = 2.8f },
+                new { name = "4.png", x = 0.32f, y = 0.08f, order = -24, z = 11f, scale = 2.6f },
+                new { name = "5.png", x = 0.45f, y = 0.1f, order = -22, z = 10f, scale = 2.4f },
+                new { name = "6.png", x = 0.58f, y = 0.12f, order = -20, z = 9f, scale = 2.2f }
+            }; 
 
             var layerTransforms = new List<Transform>();
             var layerX = new List<float>();
             var layerY = new List<float>();
             foreach (var def in layerDefs)
             {
-                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/karsiori/TileMap/Backgrounds/{def.name}");
+                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/2dAssetPack/7 Levels/Tiled/Backgrounds/{def.name}");
                 if (sprite == null)
                 {
                     continue;
@@ -339,10 +338,19 @@ namespace Monk.Presentation.Editor
 
         private static Sprite LoadCoinSprite()
         {
-            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/karsiori/TileMap/Decorations/MUSHROOM 1-1.png");
-            if (sprite != null)
+            var sprites = AssetDatabase.LoadAllAssetRepresentationsAtPath("Assets/2dAssetPack/3 Objects/Gems/1.png");
+            foreach (var asset in sprites)
             {
-                return sprite;
+                if (asset is Sprite sprite)
+                {
+                    return sprite;
+                }
+            }
+
+            var fallback = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2dAssetPack/3 Objects/Gems/1.png");
+            if (fallback != null)
+            {
+                return fallback;
             }
 
             return AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
@@ -404,3 +412,4 @@ namespace Monk.Presentation.Editor
     }
 }
 #endif
+

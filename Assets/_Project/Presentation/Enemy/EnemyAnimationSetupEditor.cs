@@ -9,17 +9,15 @@ namespace Monk.Presentation.Editor
 {
     public static class EnemyAnimationSetupEditor
     {
-        private const string SpriteSheetPath = "Assets/_Project/Sprites/Enemy/tufei.png";
+        private const string EnemyRoot = "Assets/2dAssetPack/4 Enemies/4";
+        private const string IdleStripPath = EnemyRoot + "/Idle.png";
+        private const string WalkStripPath = EnemyRoot + "/Walk.png";
+        private const string AttackStripPath = EnemyRoot + "/Attack.png";
+        private const string HitStripPath = EnemyRoot + "/Hit.png";
+
         private const string AnimationsFolder = "Assets/_Project/Animations/Enemy";
         private const string ControllerPath = AnimationsFolder + "/Enemy.controller";
-        private const string SpritePrefix = "tufei_";
         private const float ClipFps = 12f;
-
-        private static readonly int[] IdleFrames = { 0, 1, 2, 3 };
-        private static readonly int[] WalkFrames = { 4, 5, 6, 7, 8 };
-        private static readonly int[] AttackFrames = { 9, 10, 11, 12, 13, 14, 15, 16 };
-        private static readonly int[] HurtFrames = { 17, 18, 19 };
-        private static readonly int[] DeathFrames = { 20, 21, 22, 23 };
 
         [MenuItem("Tools/Monk/Setup/Generate Enemy Animations")]
         public static void GenerateEnemyAnimations()
@@ -28,28 +26,34 @@ namespace Monk.Presentation.Editor
             EnsureFolder("Assets/_Project/Animations");
             EnsureFolder(AnimationsFolder);
 
-            var sprites = LoadSheetSprites();
-            var hasSpriteFrames = sprites.Count > 0;
+            TwoDAssetPackMigrationEditor.EnsurePresetASpriteSlices();
 
-            var idleClip = hasSpriteFrames
-                ? CreateSpriteClip("EnemyIdle", IdleFrames, true, sprites)
+            var idleFrames = LoadStripSprites(IdleStripPath);
+            var walkFrames = LoadStripSprites(WalkStripPath);
+            var attackFrames = LoadStripSprites(AttackStripPath);
+            var hitFrames = LoadStripSprites(HitStripPath);
+
+            var hasFrames = idleFrames.Count > 0 || walkFrames.Count > 0 || attackFrames.Count > 0 || hitFrames.Count > 0;
+
+            var idleClip = hasFrames
+                ? CreateSpriteClip("EnemyIdle", CoalesceFrames(idleFrames, walkFrames, hitFrames), true)
                 : LoadExistingClip("EnemyIdle");
-            var walkClip = hasSpriteFrames
-                ? CreateSpriteClip("EnemyWalk", WalkFrames, true, sprites)
+            var walkClip = hasFrames
+                ? CreateSpriteClip("EnemyWalk", CoalesceFrames(walkFrames, idleFrames, hitFrames), true)
                 : LoadExistingClip("EnemyWalk");
-            var attackClip = hasSpriteFrames
-                ? CreateSpriteClip("EnemyAttack", AttackFrames, false, sprites)
+            var attackClip = hasFrames
+                ? CreateSpriteClip("EnemyAttack", CoalesceFrames(attackFrames, hitFrames, walkFrames), false)
                 : LoadExistingClip("EnemyAttack");
-            var hurtClip = hasSpriteFrames
-                ? CreateSpriteClip("EnemyHurt", HurtFrames, false, sprites)
+            var hurtClip = hasFrames
+                ? CreateSpriteClip("EnemyHurt", CoalesceFrames(hitFrames, attackFrames, idleFrames), false)
                 : LoadExistingClip("EnemyHurt");
-            var deathClip = hasSpriteFrames
-                ? CreateSpriteClip("EnemyDeath", DeathFrames, false, sprites)
+            var deathClip = hasFrames
+                ? CreateSpriteClip("EnemyDeath", CoalesceFrames(hitFrames, attackFrames, walkFrames), false)
                 : LoadExistingClip("EnemyDeath");
 
             if (idleClip == null || walkClip == null || attackClip == null || hurtClip == null || deathClip == null)
             {
-                Debug.LogError($"Unable to build controller. Missing sprite frames and/or animation clips from '{AnimationsFolder}'.");
+                Debug.LogError($"Unable to build controller. Missing sprite frames and/or animation clips from '{EnemyRoot}'.");
                 return;
             }
 
@@ -67,65 +71,74 @@ namespace Monk.Presentation.Editor
             return AssetDatabase.LoadAssetAtPath<AnimationClip>($"{AnimationsFolder}/{clipName}.anim");
         }
 
-        private static Dictionary<int, Sprite> LoadSheetSprites()
+        private static List<Sprite> LoadStripSprites(string path)
         {
-            var result = new Dictionary<int, Sprite>();
-            var candidatePaths = new List<string> { SpriteSheetPath };
+            var sprites = AssetDatabase.LoadAllAssetRepresentationsAtPath(path)
+                .OfType<Sprite>()
+                .ToList();
 
-            var textureGuids = AssetDatabase.FindAssets("tufei t:Texture2D");
-            foreach (var guid in textureGuids)
+            if (sprites.Count == 0)
             {
-                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                if (!assetPath.EndsWith("/tufei.png"))
+                var single = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (single != null)
                 {
-                    continue;
-                }
-
-                if (!candidatePaths.Contains(assetPath))
-                {
-                    candidatePaths.Add(assetPath);
+                    sprites.Add(single);
                 }
             }
 
-            foreach (var path in candidatePaths)
+            sprites.Sort((left, right) =>
             {
-                var subAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
-                foreach (var asset in subAssets)
-                {
-                    TryAddSprite(asset, result);
-                }
+                var leftIndex = ExtractTrailingNumber(left.name);
+                var rightIndex = ExtractTrailingNumber(right.name);
+                var compare = leftIndex.CompareTo(rightIndex);
+                return compare != 0 ? compare : string.CompareOrdinal(left.name, right.name);
+            });
 
-                var allAssets = AssetDatabase.LoadAllAssetsAtPath(path);
-                foreach (var asset in allAssets)
-                {
-                    TryAddSprite(asset, result);
-                }
-
-                if (result.Count > 0)
-                {
-                    return result;
-                }
-            }
-
-            return result;
+            return sprites;
         }
 
-        private static void TryAddSprite(Object asset, IDictionary<int, Sprite> sprites)
+        private static List<Sprite> CoalesceFrames(params List<Sprite>[] candidates)
         {
-            if (asset is not Sprite sprite)
+            for (var i = 0; i < candidates.Length; i++)
             {
-                return;
+                if (candidates[i] != null && candidates[i].Count > 0)
+                {
+                    return candidates[i];
+                }
             }
 
-            var suffix = sprite.name.Replace(SpritePrefix, string.Empty);
-            if (int.TryParse(suffix, out var frame))
-            {
-                sprites[frame] = sprite;
-            }
+            return new List<Sprite>();
         }
 
-        private static AnimationClip CreateSpriteClip(string clipName, int[] frameIndices, bool loop, IReadOnlyDictionary<int, Sprite> sprites)
+        private static int ExtractTrailingNumber(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return -1;
+            }
+
+            var end = value.Length - 1;
+            while (end >= 0 && char.IsDigit(value[end]))
+            {
+                end--;
+            }
+
+            if (end == value.Length - 1)
+            {
+                return -1;
+            }
+
+            var suffix = value[(end + 1)..];
+            return int.TryParse(suffix, out var result) ? result : -1;
+        }
+
+        private static AnimationClip CreateSpriteClip(string clipName, IReadOnlyList<Sprite> frames, bool loop)
+        {
+            if (frames == null || frames.Count == 0)
+            {
+                return LoadExistingClip(clipName);
+            }
+
             var clipPath = $"{AnimationsFolder}/{clipName}.anim";
             var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
             if (clip == null)
@@ -143,26 +156,21 @@ namespace Monk.Presentation.Editor
                 propertyName = "m_Sprite"
             };
 
-            var keyframes = new List<ObjectReferenceKeyframe>(frameIndices.Length);
-            for (var i = 0; i < frameIndices.Length; i++)
+            var keyframes = new ObjectReferenceKeyframe[frames.Count];
+            for (var i = 0; i < frames.Count; i++)
             {
-                if (!sprites.TryGetValue(frameIndices[i], out var s))
-                {
-                    continue;
-                }
-
-                keyframes.Add(new ObjectReferenceKeyframe
+                keyframes[i] = new ObjectReferenceKeyframe
                 {
                     time = i / ClipFps,
-                    value = s
-                });
+                    value = frames[i]
+                };
             }
 
-            AnimationUtility.SetObjectReferenceCurve(clip, binding, keyframes.ToArray());
+            AnimationUtility.SetObjectReferenceCurve(clip, binding, keyframes);
 
             var settings = AnimationUtility.GetAnimationClipSettings(clip);
             settings.loopTime = loop;
-            settings.stopTime = frameIndices.Length / ClipFps;
+            settings.stopTime = frames.Count / ClipFps;
             AnimationUtility.SetAnimationClipSettings(clip, settings);
 
             EditorUtility.SetDirty(clip);

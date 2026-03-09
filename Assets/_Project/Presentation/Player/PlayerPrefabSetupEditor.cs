@@ -7,8 +7,7 @@ namespace Monk.Presentation.Editor
     public static class PlayerPrefabSetupEditor
     {
         private const string PrefabPath = "Assets/_Project/Prefabs/Player/Player.prefab";
-        private const string SpriteSheetPath = "Assets/nemaycojohn/player and enemy/PL.png";
-        private const string DefaultSpriteName = "PL_11";
+        private const string IdleStripPath = "Assets/2dAssetPack/1 Main Characters/1/Idle.png";
         private const string ControllerPath = "Assets/_Project/Animations/Player/Player.controller";
         private const float DefaultMoveSpeed = 3f;
 
@@ -99,16 +98,18 @@ namespace Monk.Presentation.Editor
 
         private static Sprite LoadDefaultSprite()
         {
-            var allAssets = AssetDatabase.LoadAllAssetsAtPath(SpriteSheetPath);
+            TwoDAssetPackMigrationEditor.EnsurePresetASpriteSlices();
+
+            var allAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(IdleStripPath);
             foreach (var asset in allAssets)
             {
-                if (asset is Sprite sprite && sprite.name == DefaultSpriteName)
+                if (asset is Sprite sprite)
                 {
                     return sprite;
                 }
             }
 
-            return null;
+            return AssetDatabase.LoadAssetAtPath<Sprite>(IdleStripPath);
         }
 
         private static ScriptableObject LoadPlayerConfig()

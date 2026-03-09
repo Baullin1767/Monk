@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 3427781182119870472}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,6 +167,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1960733349450649504
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -212,16 +213,16 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: -8206171397277423704, guid: 54e3432928f45ba4c8a29de7ecc9e846, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
-  m_MaskInteraction: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!50 &5361418012457419922
 Rigidbody2D:
@@ -371,6 +372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Presentation::Monk.Presentation.PlayerView
   spriteRenderer: {fileID: 1960733349450649504}
+  transformHit: {fileID: 0}
   landParticles: {fileID: 0}
   damageFlashDuration: 0.08
   damageFlashColor: {r: 1, g: 0.45, b: 0.45, a: 1}
@@ -392,6 +394,7 @@ MonoBehaviour:
   playerAnimator: {fileID: 2464234128882241316}
   view: {fileID: 5746272946602080432}
   attackHitbox: {fileID: 1072303478127478561}
-  firstAttackDuration: 0.45
-  secondAttackDuration: 0.35
+  firstAttackDuration: 0.2
+  secondAttackDuration: 0.2
   comboChainTimeout: 0.8
+  fallDeathY: -12
