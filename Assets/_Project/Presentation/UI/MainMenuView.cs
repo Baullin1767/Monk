@@ -1,15 +1,11 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Monk.Common;
 using Monk.Infrastructure;
 
 namespace Monk.Presentation
 {
     public class MainMenuView : MonoBehaviour
     {
-        private const string NoHealthMessage = "You dont have enoth Health go to Store to buy some health Kit";
-
         private void Awake()
         {
             Screen.autorotateToLandscapeLeft = false;
@@ -21,18 +17,16 @@ namespace Monk.Presentation
         {
             var storage = new PlayerPrefsStorage();
             PlayerHealth.SyncHealthWithRealtime(storage, 3);
-            var maxHealth = storage.GetInt(PlayerHealth.MaxHealthKey, 3);
+            var maxHealth = Mathf.Max(1, storage.GetInt(PlayerHealth.MaxHealthKey, 3));
             var currentHealth = storage.GetInt(PlayerHealth.CurrentHealthKey, maxHealth);
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
             if (currentHealth <= 0)
             {
-                var windowManager = FindFirstObjectByType<UIWindowManager>();
-                windowManager?.OpenStore();
-
-                var storeWindow = FindFirstObjectByType<MainMenuStoreWindowView>();
-                storeWindow?.ShowFeedback(NoHealthMessage);
-                return;
+                currentHealth = 1;
+                storage.SetInt(PlayerHealth.MaxHealthKey, maxHealth);
+                storage.SetInt(PlayerHealth.CurrentHealthKey, currentHealth);
+                storage.Save();
             }
 
             Screen.orientation = ScreenOrientation.LandscapeLeft;
