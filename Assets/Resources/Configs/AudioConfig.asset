@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Monk.Configs.AudioConfig
   defaultMusicVolume: 0.7
   defaultSFXVolume: 1
-  mainThemeClip: {fileID: 8300000, guid: f72aebf2bfb02c6438375eecd86287b0, type: 3}
+  mainThemeClip: {fileID: 8300000, guid: a6d5af839121a7a4ca678637a8e55627, type: 3}
   jumpClip: {fileID: 8300000, guid: 3d2cc4945e8c9554b906e44a2fa4ce66, type: 3}
-  hurtClip: {fileID: 8300000, guid: 0ddf3cbb2b83c1947b4eecf0252fddfd, type: 3}
-  hitEnemyClip: {fileID: 8300000, guid: ff8a295f027b9184192177b796904201, type: 3}
+  hurtClip: {fileID: 8300000, guid: a7c60e0b76a552d4394eadd51dbb4af3, type: 3}
+  hitEnemyClip: {fileID: 8300000, guid: e38c4d4acd1104140baeda97acfdbdd1, type: 3}
   coinClip: {fileID: 0}

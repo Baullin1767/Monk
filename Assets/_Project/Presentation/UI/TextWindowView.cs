@@ -8,91 +8,128 @@ namespace Monk.Presentation
     public class TextWindowView : MonoBehaviour
     {
         [SerializeField] private TextContentConfig config;
-
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI bodyText;
+        [SerializeField] private ScrollRect scrollView;
 
         private void Awake()
         {
-            BuildUI();
+            CacheReferences();
+            ConfigureScrollView();
         }
 
         private void OnEnable()
         {
-            if (config == null) return;
-            if (titleText != null) titleText.text = config.Title;
-            if (bodyText != null) bodyText.text = config.Body;
+            ApplyConfig();
+            RefreshLayoutAndPosition();
         }
 
-        private void BuildUI()
+        private void CacheReferences()
         {
-            var titleTransform = transform.Find("Title");
-            if (titleTransform != null)
-                titleText = titleTransform.GetComponent<TextMeshProUGUI>();
+            if (titleText == null)
+            {
+                titleText = FindTextByName("Title");
+                titleText ??= FindTextByName("Title (1)");
+                titleText ??= FindTextByName("Titletext");
+            }
 
-            var scrollGo = new GameObject("ScrollView", typeof(RectTransform), typeof(ScrollRect), typeof(Image));
-            scrollGo.transform.SetParent(transform, false);
+            if (scrollView == null)
+            {
+                scrollView = GetComponentInChildren<ScrollRect>(true);
+            }
 
-            var scrollRect = scrollGo.GetComponent<RectTransform>();
-            scrollRect.anchorMin = new Vector2(0f, 0f);
-            scrollRect.anchorMax = new Vector2(1f, 1f);
-            scrollRect.offsetMin = new Vector2(40f, 100f);
-            scrollRect.offsetMax = new Vector2(-40f, -300f);
+            if (bodyText == null)
+            {
+                bodyText = FindBodyText();
+            }
+        }
 
-            var scrollImage = scrollGo.GetComponent<Image>();
-            scrollImage.color = new Color(0f, 0f, 0f, 0f);
+        private TextMeshProUGUI FindTextByName(string objectName)
+        {
+            var textTransform = transform.Find(objectName);
+            return textTransform != null ? textTransform.GetComponent<TextMeshProUGUI>() : null;
+        }
 
-            var viewportGo = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask));
-            viewportGo.transform.SetParent(scrollGo.transform, false);
+        private TextMeshProUGUI FindBodyText()
+        {
+            if (scrollView != null && scrollView.content != null)
+            {
+                var textInContent = scrollView.content.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (textInContent != null)
+                {
+                    return textInContent;
+                }
+            }
 
-            var viewportRect = viewportGo.GetComponent<RectTransform>();
-            viewportRect.anchorMin = Vector2.zero;
-            viewportRect.anchorMax = Vector2.one;
-            viewportRect.offsetMin = Vector2.zero;
-            viewportRect.offsetMax = Vector2.zero;
+            var bodyTransform = transform.Find("ScrollView/Viewport/Content/BodyText");
+            return bodyTransform != null ? bodyTransform.GetComponent<TextMeshProUGUI>() : null;
+        }
 
-            var viewportImage = viewportGo.GetComponent<Image>();
-            viewportImage.color = new Color(0f, 0f, 0f, 0f);
+        private void ConfigureScrollView()
+        {
+            if (scrollView == null)
+            {
+                return;
+            }
 
-            var mask = viewportGo.GetComponent<Mask>();
-            mask.showMaskGraphic = false;
+            if (scrollView.viewport == null)
+            {
+                var viewport = scrollView.transform.Find("Viewport") as RectTransform;
+                if (viewport != null)
+                {
+                    scrollView.viewport = viewport;
+                }
+            }
 
-            var contentGo = new GameObject("Content", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
-            contentGo.transform.SetParent(viewportGo.transform, false);
+            if (scrollView.content == null && scrollView.viewport != null)
+            {
+                var content = scrollView.viewport.transform.Find("Content") as RectTransform;
+                if (content != null)
+                {
+                    scrollView.content = content;
+                }
+            }
 
-            var contentRect = contentGo.GetComponent<RectTransform>();
-            contentRect.anchorMin = new Vector2(0f, 1f);
-            contentRect.anchorMax = new Vector2(1f, 1f);
-            contentRect.pivot = new Vector2(0.5f, 1f);
-            contentRect.offsetMin = new Vector2(0f, 0f);
-            contentRect.offsetMax = new Vector2(0f, 0f);
+            scrollView.horizontal = false;
+            scrollView.vertical = true;
+            scrollView.movementType = ScrollRect.MovementType.Elastic;
 
-            var contentLayout = contentGo.GetComponent<VerticalLayoutGroup>();
-            contentLayout.padding = new RectOffset(20, 20, 10, 10);
-            contentLayout.childControlWidth = true;
-            contentLayout.childControlHeight = true;
-            contentLayout.childForceExpandWidth = true;
-            contentLayout.childForceExpandHeight = false;
+            if (scrollView.scrollSensitivity <= 0f)
+            {
+                scrollView.scrollSensitivity = 20f;
+            }
+        }
 
-            var contentFitter = contentGo.GetComponent<ContentSizeFitter>();
-            contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        private void ApplyConfig()
+        {
+            if (config == null)
+            {
+                return;
+            }
 
-            var bodyGo = new GameObject("BodyText", typeof(RectTransform), typeof(TextMeshProUGUI));
-            bodyGo.transform.SetParent(contentGo.transform, false);
+            if (titleText != null)
+            {
+                titleText.text = config.Title;
+            }
 
-            bodyText = bodyGo.GetComponent<TextMeshProUGUI>();
-            bodyText.fontSize = 26f;
-            bodyText.color = Color.white;
-            bodyText.alignment = TextAlignmentOptions.TopLeft;
-            bodyText.enableWordWrapping = true;
+            if (bodyText != null)
+            {
+                bodyText.text = config.Body;
+                bodyText.enableWordWrapping = true;
+                bodyText.raycastTarget = false;
+            }
+        }
 
-            var scroll = scrollGo.GetComponent<ScrollRect>();
-            scroll.viewport = viewportRect;
-            scroll.content = contentRect;
-            scroll.horizontal = false;
-            scroll.vertical = true;
-            scroll.movementType = ScrollRect.MovementType.Elastic;
-            scroll.scrollSensitivity = 20f;
+        private void RefreshLayoutAndPosition()
+        {
+            if (scrollView == null || scrollView.content == null)
+            {
+                return;
+            }
+
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(scrollView.content);
+            scrollView.verticalNormalizedPosition = 1f;
         }
     }
 }

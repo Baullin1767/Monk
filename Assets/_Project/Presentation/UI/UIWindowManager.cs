@@ -19,7 +19,21 @@ namespace Monk.Presentation
         private GameObject activeWindow;
         
 
-        private void Start() => ShowMainMenu();
+        private void Start()
+        {
+            HideAllWindows();
+            ShowMainMenu();
+        }
+
+        private void HideAllWindows()
+        {
+            mainMenuPanel.SetActive(false);
+            storeWindow.SetActive(false);
+            settingsWindow.SetActive(false);
+            aboutWindow.SetActive(false);
+            termsWindow.SetActive(false);
+            privacyPolicyWindow.SetActive(false);
+        }
 
         public void ShowMainMenu()
         {
