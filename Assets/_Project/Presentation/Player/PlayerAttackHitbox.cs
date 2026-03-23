@@ -11,6 +11,7 @@ namespace Monk.Presentation
 
         private BoxCollider2D boxCollider;
         private bool isActive;
+        private ContactFilter2D overlapFilter;
         private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
         private readonly Collider2D[] overlapBuffer = new Collider2D[16];
 
@@ -18,6 +19,7 @@ namespace Monk.Presentation
         {
             boxCollider = GetComponent<BoxCollider2D>();
             boxCollider.enabled = false;
+            overlapFilter = ContactFilter2D.noFilter;
         }
 
         public void EnableHitbox()
@@ -43,7 +45,7 @@ namespace Monk.Presentation
                 boxCollider.size.y * Mathf.Abs(lossyScale.y)
             );
 
-            int count = Physics2D.OverlapBoxNonAlloc(worldCenter, worldSize, 0f, overlapBuffer);
+            int count = Physics2D.OverlapBox(worldCenter, worldSize, 0f, overlapFilter, overlapBuffer);
 
             for (int i = 0; i < count; i++)
             {

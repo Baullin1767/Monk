@@ -115,7 +115,7 @@ namespace Monk.Presentation
             if (bodyText != null)
             {
                 bodyText.text = config.Body;
-                bodyText.enableWordWrapping = true;
+                bodyText.textWrappingMode = TextWrappingModes.Normal;
                 bodyText.raycastTarget = false;
             }
         }

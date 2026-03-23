@@ -59,8 +59,7 @@ namespace Monk.Presentation.Editor
             var tilemapRenderer = groundGo.AddComponent<TilemapRenderer>();
             tilemapRenderer.sortingOrder = -5;
 
-            var tilemapCollider = groundGo.AddComponent<TilemapCollider2D>();
-            tilemapCollider.usedByComposite = false;
+            groundGo.AddComponent<TilemapCollider2D>();
             var rigidbody = groundGo.AddComponent<Rigidbody2D>();
             if (rigidbody != null)
             {
